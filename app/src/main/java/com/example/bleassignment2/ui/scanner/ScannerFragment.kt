@@ -1,4 +1,4 @@
-package com.example.bleassignment2.ui.dashboard
+package com.example.bleassignment2.ui.scanner
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.bleassignment2.databinding.FragmentDashboardBinding
+import com.example.bleassignment2.databinding.FragmentScannerBinding
 
-class DashboardFragment : Fragment() {
+class ScannerFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentScannerBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,14 +22,14 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+        val scannerViewModel =
+            ViewModelProvider(this).get(ScannerViewModel::class.java)
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentScannerBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
+        val textView: TextView = binding.textScanner
+        scannerViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
