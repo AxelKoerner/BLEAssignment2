@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 class ScannerViewModel : ViewModel() {
 
     private val bleManager = BLEManager()
-    val devices: LiveData<List<BluetoothDevice>> = bleManager.devices
+    val devices: LiveData<List<Pair<BluetoothDevice, Int>>> = bleManager.devices
 
     private val _buttonText = MutableLiveData<String>().apply {
         value = "Scan"

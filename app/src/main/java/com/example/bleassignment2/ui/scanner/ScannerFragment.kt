@@ -12,7 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bleassignment2.databinding.FragmentScannerBinding
+import com.example.bleassignment2.ui.device.DeviceAdapter
 
 class ScannerFragment : Fragment() {
 
@@ -27,14 +29,29 @@ class ScannerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val scannerViewModel =
             ViewModelProvider(this).get(ScannerViewModel::class.java)
 
+        //inflate the fragment_scanner.xml using View Binding
         _binding = FragmentScannerBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val button: Button = binding.scannerButton
+        val recyclerView = binding.deviceList
+        val adapter = DeviceAdapter(emptyList()) { device ->
+            println("Connecting to ${device.address}")
+            // TODO: Implement the connection to the device
+        }
 
-        //backwards compatibility
+        //assign the adapter to the recycle view so that it knows how many items, definition of items and the data to show
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        scannerViewModel.devices.observe(viewLifecycleOwner) { devices ->
+            adapter.updateDevices(devices)
+        }
+
+
+        //backwards compatibility (chooses permission that are required based on the sdk version)
         val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             arrayOf(
                 android.Manifest.permission.BLUETOOTH_SCAN,
@@ -48,6 +65,7 @@ class ScannerFragment : Fragment() {
         }
 
 
+        //request permission launcher
         val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
@@ -60,6 +78,7 @@ class ScannerFragment : Fragment() {
             }
         }
 
+        //checks if all self permission are granted
         fun hasPermissions(): Boolean {
             return requiredPermissions.all {
                 ContextCompat.checkSelfPermission(
@@ -69,6 +88,7 @@ class ScannerFragment : Fragment() {
             }
         }
 
+        //logic for the button, start scan if permission is granted (calls middle layer ViewModel method) else launch the permission requester
         button.setOnClickListener {
             if (button.text == "Scan") {
                 if (hasPermissions()) {
