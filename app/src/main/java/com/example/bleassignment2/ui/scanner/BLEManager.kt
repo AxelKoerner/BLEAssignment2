@@ -24,6 +24,7 @@ class BLEManager() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.device?.let { device ->
                 _devices.value = _devices.value?.plus(device) ?: listOf(device)
+                println("Discovered device: ${device.name ?: "Unnamed"} - ${device.address}")
             }
         }
     }

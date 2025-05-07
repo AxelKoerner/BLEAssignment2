@@ -22,7 +22,6 @@ class ScannerFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,13 +34,18 @@ class ScannerFragment : Fragment() {
         val root: View = binding.root
         val button: Button = binding.scannerButton
 
-        val requiredPermissions = arrayOf(
-            android.Manifest.permission.BLUETOOTH_SCAN,
-            android.Manifest.permission.BLUETOOTH_CONNECT,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.BLUETOOTH_ADMIN
-        )
+        //backwards compatibility
+        val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                android.Manifest.permission.BLUETOOTH_SCAN,
+                android.Manifest.permission.BLUETOOTH_CONNECT
+            )
+        } else {
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.BLUETOOTH_ADMIN
+            )
+        }
 
 
         val requestPermissionLauncher = registerForActivityResult(
@@ -72,7 +76,6 @@ class ScannerFragment : Fragment() {
                     button.text = "Cancel Scan"
                 } else {
                     requestPermissionLauncher.launch(requiredPermissions)
-                    println("Missing Permissions")
                 }
             } else {
                 if (hasPermissions()) {
@@ -80,7 +83,6 @@ class ScannerFragment : Fragment() {
                     button.text = "Scan"
                 } else {
                     requestPermissionLauncher.launch(requiredPermissions)
-                    println("Missing Permissions")
                 }
             }
         }
