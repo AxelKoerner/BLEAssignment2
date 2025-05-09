@@ -37,6 +37,12 @@
                 android:layout_height="wrap_content"
                 android:text="-70 dBm" />
 
+            <TextView
+                android:id="@+id/device_isConnectable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="True" />
+
         </LinearLayout>
 
         <Button

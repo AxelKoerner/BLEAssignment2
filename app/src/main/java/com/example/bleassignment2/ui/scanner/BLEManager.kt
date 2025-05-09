@@ -25,7 +25,7 @@ class BLEManager() {
     val devices: LiveData<List<Pair<BluetoothDevice, Int>>> get() = _devices
 
     //Callback function that gets called from the startScan() / stopScan() method. Here the ScanResult can get processed
-    private val scanCallback = object : ScanCallback() {
+    private var scanCallback: ScanCallback = object : ScanCallback(){
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.let { res ->
                 val device = res.device
@@ -41,6 +41,7 @@ class BLEManager() {
     //Start Scan with a Filter and Settings (both standard and not explicitly defined)
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun startScan() {
+        _devices.value = emptyList()
         val scanFilter = ScanFilter.Builder().build()
         val settings = ScanSettings.Builder().build()
         bluetoothLeScanner?.startScan(listOf(scanFilter), settings, scanCallback)

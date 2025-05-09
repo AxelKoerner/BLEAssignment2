@@ -20,6 +20,7 @@ class DeviceAdapter(
         val name: TextView = view.findViewById(R.id.device_name)
         val address: TextView = view.findViewById(R.id.device_address)
         val rssi: TextView = view.findViewById(R.id.device_rssi)
+        val isConnectable: TextView = view.findViewById(R.id.device_isConnectable)
         val connectButton: Button = view.findViewById(R.id.connect_button)
     }
 
@@ -34,6 +35,7 @@ class DeviceAdapter(
         val (device, rssi) = devices[position]
         holder.name.text = device.name ?: "N/A"
         holder.address.text = device.address
+        holder.isConnectable.text = if (device.bondState == BluetoothDevice.BOND_NONE) "Not bonded" else "Bonded"
         holder.rssi.text = "$rssi dBm"
         holder.connectButton.setOnClickListener {
             onConnectClick(device)
