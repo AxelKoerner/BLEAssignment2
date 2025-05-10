@@ -39,8 +39,7 @@ class ScannerFragment : Fragment() {
         val button: Button = binding.scannerButton
         val recyclerView = binding.deviceList
         val adapter = DeviceAdapter(emptyList()) { device ->
-            println("Connecting to ${device.address}")
-            // TODO: Implement the connection to the device
+            scannerViewModel.connectToDevice(device)
         }
 
         //assign the adapter to the recycle view so that it knows how many items, definition of items and the data to show
