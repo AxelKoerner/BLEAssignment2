@@ -38,6 +38,7 @@ class DeviceAdapter(
         holder.isConnectable.text = if (device.bondState == BluetoothDevice.BOND_NONE) "Not bonded" else "Bonded"
         holder.rssi.text = "$rssi dBm"
         holder.connectButton.setOnClickListener {
+            holder.connectButton.text = "Connected"
             onConnectClick(device)
         }
     }
