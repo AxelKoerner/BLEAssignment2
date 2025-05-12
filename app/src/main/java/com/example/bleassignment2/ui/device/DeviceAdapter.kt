@@ -50,8 +50,12 @@ class DeviceAdapter(
             println("=============================")
             if (isDeviceConnected(device)) {
                 onDisconnectClick(device)
+                holder.connectButton.text = "Connect"
+
             } else {
                 onConnectClick(device)
+                holder.connectButton.text = "Disconnect"
+
             }
         }
     }

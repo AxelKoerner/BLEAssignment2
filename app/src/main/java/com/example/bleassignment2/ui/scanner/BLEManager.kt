@@ -34,7 +34,7 @@ class BLEManager() {
                 val current = _devices.value ?: listOf()
                 //only show the devices
                 if (current.none { it.first.address == device.address }
-                    && (res.device.name == "IPVSWeather" || res.device.name == "IPVS-LIGHT")  ) {
+                    && (res.device.name == "IPVSWeather" || res.device.name == "IPVS-LIGHT" || res.device.name == "ESP_GATTS_DEMO")  ) {
                     _devices.value = current + Pair(device, rssi)
                 }
             }
