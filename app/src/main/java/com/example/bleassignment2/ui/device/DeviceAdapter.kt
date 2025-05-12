@@ -13,7 +13,9 @@ import com.example.bleassignment2.R
 
 class DeviceAdapter(
     private var devices: List<Pair<BluetoothDevice, Int>>,
-    private val onConnectClick: (BluetoothDevice) -> Unit
+    private val onConnectClick: (BluetoothDevice) -> Unit,
+    private val onDisconnectClick: (BluetoothDevice) -> Unit,
+    private val isDeviceConnected: (BluetoothDevice) -> Boolean
 ) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 
     inner class DeviceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -37,9 +39,20 @@ class DeviceAdapter(
         holder.address.text = device.address
         holder.isConnectable.text = if (device.bondState == BluetoothDevice.BOND_NONE) "Not bonded" else "Bonded"
         holder.rssi.text = "$rssi dBm"
+
+        if (isDeviceConnected(device)) {
+            holder.connectButton.text = "Disconnect"
+        } else {
+            holder.connectButton.text = "Connect"
+        }
+
         holder.connectButton.setOnClickListener {
-            holder.connectButton.text = "Connected"
-            onConnectClick(device)
+            println("=============================")
+            if (isDeviceConnected(device)) {
+                onDisconnectClick(device)
+            } else {
+                onConnectClick(device)
+            }
         }
     }
 

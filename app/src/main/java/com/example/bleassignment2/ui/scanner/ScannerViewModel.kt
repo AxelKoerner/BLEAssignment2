@@ -32,13 +32,22 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun connectToDevice(device: BluetoothDevice) {
+        println("CALLED CONNCT")
         _currentSelection.setValue(device)
         bleConnectionManager.connectToDevice(device)
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun isDeviceConnected(device: BluetoothDevice): Boolean {
+        println("CALLED ISConnected")
+        return _currentSelection.value == device;
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun disconnect() {
+        println("CALLED DICONNECT")
         _currentSelection = MutableLiveData()
         bleConnectionManager.disconnect()
     }
+
 }
