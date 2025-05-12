@@ -8,11 +8,24 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.Context
-import android.content.Intent
+import android.widget.Toast
 import androidx.annotation.RequiresPermission
+import java.util.Arrays
+import java.util.LinkedList
+import java.util.Queue
+import java.util.UUID
+
+
+
 
 class BLEConnectionManager(private val context: Context) {
     private var gattServer: BluetoothGatt? = null
+    private val characteristicQueue: Queue<BluetoothGattCharacteristic> = LinkedList()
+    private val characteristicUUIDs = listOf(
+        UUID.fromString("10000001-0000-0000-FDFD-FDFDFDFDFDFD"),  // Intensity for IPVS-Light
+        UUID.fromString("00002A6F-0000-1000-8000-00805F9B34FB"),   // Humidity for IPVSWeather
+        UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")  //Temperature for IPVSWeather
+    )
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun connectToDevice(device: BluetoothDevice) {
@@ -38,19 +51,23 @@ class BLEConnectionManager(private val context: Context) {
 
         //Service UUID for the IPVSWeather: 00000002-0000-0000-FDFD-FDFDFDFDFDFD
         //Service UUID for the IPVS-Light: 00000001-0000-0000-FDFD-FDFDFDFDFDFD
-        //TODO for the Service UUID and extract the necessary information through the Characteristic UUID
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 println("Service Discovered")
                 for (service: BluetoothGattService in gatt.services) {
                    println("Service UUID: ${service.uuid}")
                     for (characteristic: BluetoothGattCharacteristic in service.characteristics) {
-                        println("Characteristic UUID: ${characteristic.uuid}")
+                        if (characteristic.uuid in characteristicUUIDs) {
+                            characteristicQueue.add(characteristic)
+                        }
                     }
                 }
+                readNextCharacteristics(gatt)
             }
         }
 
+        //here the information about the characteristic value is provided TODO needs to be broadcasted
         override fun onCharacteristicRead(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
@@ -62,6 +79,7 @@ class BLEConnectionManager(private val context: Context) {
             }
         }
 
+        //TODO changed characteristic value needs to be broadcasted
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
@@ -71,9 +89,18 @@ class BLEConnectionManager(private val context: Context) {
         }
     }
 
-    private fun broadcastUpdate(action: String, characteristic: BluetoothGattCharacteristic) {
-        val intent = Intent(action)
-        //todo implement parsing logic https://developer.android.com/develop/connectivity/bluetooth/ble/transfer-ble-data
-        //sendBroadcast(intent)
+    //reading the characteristics is an async function, the value is provided in onCharacteristicsRead function
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private fun readNextCharacteristics(gatt: BluetoothGatt) {
+        if (characteristicQueue.isNotEmpty()) {
+            val uuid = characteristicQueue.poll()
+            gatt.readCharacteristic(uuid)
+        } else {
+            Toast.makeText(context, "Characteristics UUID are all read", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun broadcastUpdate() {
+        //todo implement broadcasting of information
     }
 }
