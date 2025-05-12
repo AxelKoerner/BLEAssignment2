@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.RequiresPermission
 
 class BLEConnectionManager(private val context: Context) {
@@ -68,5 +69,11 @@ class BLEConnectionManager(private val context: Context) {
             val value = characteristic.value
             println("Characteristic changed: ${value.contentToString()}")
         }
+    }
+
+    private fun broadcastUpdate(action: String, characteristic: BluetoothGattCharacteristic) {
+        val intent = Intent(action)
+        //todo implement parsing logic https://developer.android.com/develop/connectivity/bluetooth/ble/transfer-ble-data
+        //sendBroadcast(intent)
     }
 }

@@ -26,12 +26,15 @@ class BLEManager() {
 
     //Callback function that gets called from the startScan() / stopScan() method. Here the ScanResult can get processed
     private var scanCallback: ScanCallback = object : ScanCallback(){
+        @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.let { res ->
                 val device = res.device
                 val rssi = res.rssi
                 val current = _devices.value ?: listOf()
-                if (current.none { it.first.address == device.address }) {
+                //only show the devices
+                if (current.none { it.first.address == device.address }
+                    && (res.device.name == "IPVSWeather" || res.device.name == "IPVS-LIGHT")  ) {
                     _devices.value = current + Pair(device, rssi)
                 }
             }
