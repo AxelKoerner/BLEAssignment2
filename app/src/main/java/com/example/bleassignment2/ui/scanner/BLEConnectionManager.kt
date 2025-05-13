@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.Context
@@ -86,6 +87,7 @@ class BLEConnectionManager(private val context: Context) {
                             //val intensity: Int = 1000  //TODO remove this
                             //val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
                             //writeCharacteristic(characteristic, valueToWrite) //TODO remove this
+                            enableNotifications(characteristic) //TODO remove this
                         }
                     }
                 }
@@ -185,12 +187,14 @@ class BLEConnectionManager(private val context: Context) {
     }
 
     private fun parseSfloat(bytes: ByteArray): Float {
-        if (bytes.size != 2) {
-            throw IllegalArgumentException("sfloat muss 2 Bytes lang sein")
+        if (bytes.size < 2) {
+            throw IllegalArgumentException("sfloat benötigt mindestens 2 Bytes")
         }
-        val shortValue = ByteBuffer.wrap(bytes)
+
+        val shortValue = ByteBuffer.wrap(bytes.copyOfRange(1, 3))
             .order(ByteOrder.LITTLE_ENDIAN)
             .short
+
         return shortValue / 100.0f
     }
 
@@ -205,6 +209,26 @@ class BLEConnectionManager(private val context: Context) {
             println("Write failed")
         }
     }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private fun enableNotifications(characteristic: BluetoothGattCharacteristic) {
+        gattServer?.let { gatt ->
+            val success = gatt.setCharacteristicNotification(characteristic, true)
+            if (success) {
+                val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+                if (descriptor != null) {
+                    descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                    gatt.writeDescriptor(descriptor)
+                    println("Notification enabled for ${characteristic.uuid}")
+                } else {
+                    println("CCCD Descriptor not found for ${characteristic.uuid}")
+                }
+            } else {
+                println("setCharacteristicNotification failed for ${characteristic.uuid}")
+            }
+        }
+    }
+
 
 
 
