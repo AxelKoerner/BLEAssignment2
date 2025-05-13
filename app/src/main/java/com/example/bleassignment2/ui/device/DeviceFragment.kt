@@ -3,6 +3,7 @@ package com.example.bleassignment2.ui.device
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -66,6 +67,9 @@ class DeviceFragment : Fragment() {
                 }
             }
         }
+
+        val intentFilter = IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
+        requireContext().registerReceiver(broadcastReceiver, intentFilter)
 
 
         return root
