@@ -68,11 +68,16 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
         else if (type == "hum") bleConnectionManager.read(_humidityChar!!)
         else if (type == "unknown") bleConnectionManager.read(_unknownChar!!)
     }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun initNotifyCharacteristic(type: String) {
+        if (type == "temp") bleConnectionManager.requestNotify(_temperatureChar!!)
+        else if (type == "hum") bleConnectionManager.requestNotify(_humidityChar!!)
+    }
+
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun initWriteCharacteristic(type: String, value: ByteArray) {
-        if (type == "light") bleConnectionManager.write(_temperatureChar!!,value)
-        //else if (type == "hum") bleConnectionManager.read(_humidityChar!!)
-        //else if (type == "unknown") bleConnectionManager.read(_unknownChar!!)
+        if (type == "light") bleConnectionManager.write(_lightChar!!,value)
     }
 
 

@@ -52,6 +52,11 @@ class BLEConnectionManager(private val context: Context) {
         writeCharacteristic(characteristic, value)
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun requestNotify(characteristic: BluetoothGattCharacteristic) {
+        gattServer?.setCharacteristicNotification(characteristic, true)
+    }
+
     private val gattCallback = object : BluetoothGattCallback() {
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
@@ -87,7 +92,7 @@ class BLEConnectionManager(private val context: Context) {
                             //val intensity: Int = 1000  //TODO remove this
                             //val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
                             //writeCharacteristic(characteristic, valueToWrite) //TODO remove this
-                            enableNotifications(characteristic) //TODO remove this
+                            //enableNotifications(characteristic) //TODO remove this
                         }
                     }
                 }
@@ -124,12 +129,15 @@ class BLEConnectionManager(private val context: Context) {
     //reading the characteristics is an async function, the value is provided in onCharacteristicsRead function
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private fun readNextCharacteristics(gatt: BluetoothGatt) {
-        if (characteristicQueue.isNotEmpty()) {
+        println("reading Chars in loop")
+        while (characteristicQueue.isNotEmpty()) {
             val uuid = characteristicQueue.poll()
             gatt.readCharacteristic(uuid)
-        } else {
+        } //else {
             Handler(Looper.getMainLooper()).post {
-                Toast.makeText(context, "Characteristics UUID are all read", Toast.LENGTH_SHORT).show()            }
+                Toast.makeText(context, "Characteristics UUID are all read", Toast.LENGTH_SHORT)
+                    .show()
+            //}
         }
     }
 
@@ -148,6 +156,7 @@ class BLEConnectionManager(private val context: Context) {
         val intent = Intent("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
         intent.putExtra("characteristic_uuid", characteristic.uuid.toString())
         intent.putExtra("characteristic_value", characteristic.value)
+        intent.putExtra("raw_characteristic", characteristic)
 
         // Send intent to all registered Broadcast-Receiver
         when (characteristic.uuid) {

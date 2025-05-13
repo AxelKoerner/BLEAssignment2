@@ -65,9 +65,14 @@ class DeviceFragment : Fragment() {
             binding.read1CharacteristicUuid.text = "found characteristic"
             binding.read1CharacteristicValue.text = "$it °C"
             binding.read1CharacteristicReadButton.setOnClickListener(
-            @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
+                @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
                     scannerViewModel.initReadCharacteristic("temp")
                 })
+            binding.read1CharacteristicNotifyButton.setOnClickListener(
+                @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
+                    scannerViewModel.initNotifyCharacteristic("temp")
+                })
+
         }
         scannerViewModel.humidity.observe(viewLifecycleOwner) {
             if (it == null || scannerViewModel.currentSelection.value == null) {
@@ -78,6 +83,15 @@ class DeviceFragment : Fragment() {
             binding.read2CharacteristicName.text = "humidity"
             binding.read2CharacteristicUuid.text = "found characteristic"
             binding.read2CharacteristicValue.text = "$it %"
+            binding.read2CharacteristicReadButton.setOnClickListener(
+                @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
+                    scannerViewModel.initReadCharacteristic("hum")
+                })
+            binding.read2CharacteristicNotifyButton.setOnClickListener(
+                @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
+                    scannerViewModel.initNotifyCharacteristic("hum")
+                })
+
         }
         scannerViewModel.light.observe(viewLifecycleOwner) {
             if (it == null || scannerViewModel.currentSelection.value == null) {
@@ -88,7 +102,11 @@ class DeviceFragment : Fragment() {
 
             binding.writeCharacteristicWriteButton.setOnClickListener(
                 @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
-                    scannerViewModel.initWriteCharacteristic("light", ByteBuffer.allocate(Int.SIZE_BYTES).putInt(binding.writeCharacteristicValue.progress).array())
+                    scannerViewModel.initWriteCharacteristic(
+                        "light",
+                        ByteBuffer.allocate(Int.SIZE_BYTES)
+                            .putInt(binding.writeCharacteristicValue.progress).array()
+                    )
                 })
 
             binding.debugTextField.text = it.toString()
