@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -68,8 +69,18 @@ class DeviceFragment : Fragment() {
             }
         }
 
-        val intentFilter = IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
-        requireContext().registerReceiver(broadcastReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireContext().registerReceiver(
+                broadcastReceiver,
+                IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED"),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireContext().registerReceiver(
+                broadcastReceiver,
+                IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
+            )
+        }
 
 
         return root
