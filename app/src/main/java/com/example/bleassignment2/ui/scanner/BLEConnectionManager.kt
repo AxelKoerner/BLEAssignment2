@@ -17,8 +17,7 @@ import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
 import android.content.Intent
-
-
+import java.nio.ByteBuffer
 
 
 class BLEConnectionManager(private val context: Context) {
@@ -72,7 +71,8 @@ class BLEConnectionManager(private val context: Context) {
                         if (service.uuid in serviceUUIDs) {
                             characteristicQueue.add(characteristic)
                             println("Added Characteristic UUID: ${characteristic.uuid} in Service with UUID: ${service.uuid} to queue")
-                            val valueToWrite = byteArrayOf(0x02, 0x02, 0x03)  //TODO remove this
+                            val intensity: Int = 1000  //TODO remove this
+                            val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
                             writeCharacteristic(characteristic, valueToWrite) //TODO remove this
                         }
                     }
@@ -133,6 +133,7 @@ class BLEConnectionManager(private val context: Context) {
     private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, value: ByteArray) {
         characteristic.value = value
         val success = gattServer?.writeCharacteristic(characteristic) ?: false
+        println("====CALLED WRITE CHARACTERISTIC=====")
         if (success) {
             println("Write successful")
         } else {
