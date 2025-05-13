@@ -16,6 +16,7 @@ import java.util.Arrays
 import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
+import android.content.Intent
 
 
 
@@ -78,7 +79,7 @@ class BLEConnectionManager(private val context: Context) {
             }
         }
 
-        //here the information about the characteristic value is provided TODO needs to be broadcasted
+        //here the information about the characteristic value is provided needs to be broadcasted
         override fun onCharacteristicRead(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
@@ -87,16 +88,20 @@ class BLEConnectionManager(private val context: Context) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 val value = characteristic.value
                 println("Characteristic read: ${value.contentToString()}")
+
+                broadcastUpdate(characteristic)
             }
         }
 
-        //TODO changed characteristic value needs to be broadcasted
+        //changed characteristic value needs to be broadcasted
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
             val value = characteristic.value
             println("Characteristic changed: ${value.contentToString()}")
+
+            broadcastUpdate(characteristic)
         }
     }
 
@@ -112,7 +117,17 @@ class BLEConnectionManager(private val context: Context) {
         }
     }
 
-    private fun broadcastUpdate() {
-        //todo implement broadcasting of information
+    private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
+        val intent = Intent("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
+        intent.putExtra("characteristic_uuid", characteristic.uuid.toString())
+        intent.putExtra("characteristic_value", characteristic.value)
+
+        // Send intent to all registered Broadcast-Receiver
+        println("==============CALLED BROADCAST UPDATE================")
+        context.sendBroadcast(intent)
     }
+
+
+
+
 }

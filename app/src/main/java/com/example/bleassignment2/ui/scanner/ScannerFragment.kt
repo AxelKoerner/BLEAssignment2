@@ -1,5 +1,8 @@
 package com.example.bleassignment2.ui.scanner
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -7,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -23,6 +27,11 @@ class ScannerFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    // Any positive integer is possible to request the enable of bluetooth
+    companion object {
+        private const val REQUEST_ENABLE_BT = 1
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,6 +140,16 @@ class ScannerFragment : Fragment() {
         }
 
         button.text
+
+
+        // This part is only used to ask for permission to enable bluetooth, if not enabled already
+        val bluetoothManager: BluetoothManager = requireContext().getSystemService(BluetoothManager::class.java)
+        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
+        if (bluetoothAdapter?.isEnabled == false) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
+
         return root
     }
 
