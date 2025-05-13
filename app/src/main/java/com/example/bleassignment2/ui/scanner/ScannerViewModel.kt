@@ -3,10 +3,13 @@ package com.example.bleassignment2.ui.scanner
 import android.Manifest
 import android.app.Application
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattCharacteristic
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import java.util.UUID
+import kotlin.uuid.Uuid
 
 class ScannerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -23,6 +26,35 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
     }
 
     var buttonText: LiveData<String> = _buttonText
+
+    private val _temperatureChar = MutableLiveData<BluetoothGattCharacteristic>()
+
+
+    private val _temperature = MutableLiveData<Float?>()
+    val temperature: LiveData<Float?> = _temperature
+    private val _humidity = MutableLiveData<Float?>()
+    val humidity: LiveData<Float?> = _humidity
+    private val _unknown = MutableLiveData<ByteArray?>()
+    val unknown: LiveData<ByteArray?> = _unknown
+
+    fun setTemp(temp: Float, tempChar: BluetoothGattCharacteristic) {
+        _temperature.value = temp
+        _temperatureChar.value = tempChar
+    }
+    fun setHum(hum: Float) {
+        _humidity.value = hum
+    }
+    fun setUnkown(unknown: ByteArray) {
+        _unknown.value = unknown
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun initReadCharacteristic(type: String) {
+        if (type == "temp") bleConnectionManager.read(_temperatureChar.value!!)
+    }
+
+
+
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     fun startScan() {

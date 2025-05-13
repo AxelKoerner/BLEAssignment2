@@ -33,8 +33,8 @@ class DeviceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val deviceViewModel =
-            ViewModelProvider(this.requireActivity()).get(DeviceViewModel::class.java)
+        val scannerViewModel =
+            ViewModelProvider(this.requireActivity()).get(ScannerViewModel::class.java)
 
         _binding = FragmentDeviceBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -42,31 +42,35 @@ class DeviceFragment : Fragment() {
         val tv_deviceName: TextView = binding.deviceName
         val tv_deviceAddress: TextView = binding.deviceAddress
         //val textView: TextView = binding.deviceList.
-        deviceViewModel.currentSelection.observe(viewLifecycleOwner)
+        scannerViewModel.currentSelection.observe(viewLifecycleOwner)
         @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION])
         { selectedBluetoothDevice ->
             if (selectedBluetoothDevice == null) {
                 return@observe
             }
-            tv_deviceName.text = selectedBluetoothDevice.name?:"Unknown Name"
+            tv_deviceName.text = selectedBluetoothDevice.name ?: "Unknown Name"
             tv_deviceAddress.text = selectedBluetoothDevice.address
         }
-        deviceViewModel.temperature.observe(viewLifecycleOwner){
+        scannerViewModel.temperature.observe(viewLifecycleOwner) {
             binding.read1CharacteristicName.text = "temperatur"
             binding.read1CharacteristicValue.text = "$it °C"
+            binding.read1CharacteristicReadButton.setOnClickListener(
+            @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
+                    scannerViewModel.initReadCharacteristic("temp")
+                })
         }
-        deviceViewModel.humidity.observe(viewLifecycleOwner){
+        scannerViewModel.humidity.observe(viewLifecycleOwner) {
             binding.read2CharacteristicName.text = "humidity"
             binding.read2CharacteristicValue.text = "$it %"
         }
-        deviceViewModel.unknown.observe(viewLifecycleOwner){
+        scannerViewModel.unknown.observe(viewLifecycleOwner) {
             binding.debugTextField.text = it.toString()
         }
 
 
         val readButton: Button = binding.writeCharacteristicWriteButton
         readButton.setOnClickListener {
-                println("====BUTTON CLICKED======")
+            println("====BUTTON CLICKED======")
         }
 
         return root

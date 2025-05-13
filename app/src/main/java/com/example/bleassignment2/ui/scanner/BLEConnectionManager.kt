@@ -43,6 +43,10 @@ class BLEConnectionManager(private val context: Context) {
         gattServer?.disconnect()
         //gattServer?.close()
     }
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun read(characteristic: BluetoothGattCharacteristic) {
+        gattServer?.readCharacteristic(characteristic)
+    }
 
     private val gattCallback = object : BluetoothGattCallback() {
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -154,6 +158,7 @@ class BLEConnectionManager(private val context: Context) {
                 intent.putExtra("unknown_value", characteristic.value)
             }
         }
+        intent.putExtra("raw_characteristic", characteristic)
         println("==============CALLED BROADCAST UPDATE================")
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }

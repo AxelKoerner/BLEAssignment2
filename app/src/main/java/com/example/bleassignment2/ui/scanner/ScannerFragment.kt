@@ -42,8 +42,8 @@ class ScannerFragment : Fragment() {
 
         val scannerViewModel =
             ViewModelProvider(this.requireActivity()).get(ScannerViewModel::class.java)
-        val deviceViewModel =
-            ViewModelProvider(this.requireActivity()).get(DeviceViewModel::class.java)
+        //val deviceViewModel =
+        //    ViewModelProvider(this.requireActivity()).get(DeviceViewModel::class.java)
 
         //inflate the fragment_scanner.xml using View Binding
         _binding = FragmentScannerBinding.inflate(inflater, container, false)
@@ -57,12 +57,12 @@ class ScannerFragment : Fragment() {
                     println("Already connected, aborting")
                 } else {
                     scannerViewModel.connectToDevice(device)
-                    deviceViewModel.setActive(device)
+                    //deviceViewModel.setActive(device)
                 }
             },
             { device ->
                 scannerViewModel.disconnect()
-                deviceViewModel.clear()
+                //deviceViewModel.clear()
 
             },
             { device ->
