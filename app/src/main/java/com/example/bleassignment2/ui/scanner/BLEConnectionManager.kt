@@ -12,14 +12,11 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
-import java.util.Arrays
 import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import android.widget.Button
-import org.w3c.dom.Text
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 

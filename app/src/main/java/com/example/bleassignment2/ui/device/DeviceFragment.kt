@@ -1,10 +1,6 @@
 package com.example.bleassignment2.ui.device
 
 import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +11,10 @@ import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bleassignment2.databinding.FragmentDeviceBinding
-import com.example.bleassignment2.ui.scanner.ScannerViewModel
 
 class DeviceFragment : Fragment() {
 
     private var _binding: FragmentDeviceBinding? = null
-    private lateinit var broadcastReceiver: BroadcastReceiver
 
     // This property is only valid between onCreateView and
     // onDestroyView.
