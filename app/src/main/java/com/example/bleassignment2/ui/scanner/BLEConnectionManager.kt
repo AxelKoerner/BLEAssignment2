@@ -18,6 +18,8 @@ import java.util.Queue
 import java.util.UUID
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import android.widget.Button
+import org.w3c.dom.Text
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -124,8 +126,8 @@ class BLEConnectionManager(private val context: Context) {
     companion object {
         //val TEMPERATURE_UUID: UUID = UUID.fromString("2a1c")
         //val HUMIDITY_UUID: UUID = UUID.fromString("2a6f")
-        val TEMPERATURE_UUID: UUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD")
-        val HUMIDITY_UUID: UUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD")
+        val TEMPERATURE_UUID: UUID = UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")
+        val HUMIDITY_UUID: UUID = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")
     }
 
     private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
