@@ -141,7 +141,7 @@ class BLEConnectionManager(private val context: Context) {
         // Send intent to all registered Broadcast-Receiver
         when (characteristic.uuid) {
             TEMPERATURE_UUID -> {
-                val temperature = parseIEEE11073Float(characteristic.value)
+                val temperature = parseSfloat(characteristic.value)
                 intent.putExtra("type", "temperature")
                 intent.putExtra("temperature_celsius", temperature)
                 println("Broadcasting Temperature: $temperature °C")
@@ -163,35 +163,16 @@ class BLEConnectionManager(private val context: Context) {
     }
 
     private fun parseSfloat(bytes: ByteArray): Float {
-        if (bytes.size != 2) {
-            throw IllegalArgumentException("sfloat muss 2 Bytes lang sein")
+        if (bytes.size < 2) {
+            throw IllegalArgumentException("sfloat benötigt mindestens 2 Bytes")
         }
-        val shortValue = ByteBuffer.wrap(bytes)
+
+        val shortValue = ByteBuffer.wrap(bytes.copyOfRange(0, 2))
             .order(ByteOrder.LITTLE_ENDIAN)
             .short
+
         return shortValue / 100.0f
     }
-
-    private fun parseIEEE11073Float(bytes: ByteArray): Float {
-        if (bytes.size < 4) {
-            throw IllegalArgumentException("FLOAT muss mindestens 4 Bytes lang sein")
-        }
-
-        val mantissa = (bytes[0].toInt() and 0xFF) or
-                ((bytes[1].toInt() and 0xFF) shl 8) or
-                ((bytes[2].toInt() and 0xFF) shl 16)
-
-        val exponent = bytes[3].toInt().toByte().toInt() // signed 8-bit
-
-        val signedMantissa = if (mantissa and 0x800000 != 0) {
-            mantissa or -0x1000000 // sign extension for negative numbers
-        } else {
-            mantissa
-        }
-
-        return (signedMantissa * Math.pow(10.0, exponent.toDouble())).toFloat()
-    }
-
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, value: ByteArray) {
