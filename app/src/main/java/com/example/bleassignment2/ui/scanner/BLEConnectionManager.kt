@@ -95,6 +95,8 @@ class BLEConnectionManager(private val context: Context) {
         ) {
             val value = characteristic.value
             println("Characteristic changed: ${value.contentToString()}")
+
+            broadcastUpdate(characteristic)
         }
     }
 
@@ -110,7 +112,16 @@ class BLEConnectionManager(private val context: Context) {
         }
     }
 
-    private fun broadcastUpdate() {
-        //todo implement broadcasting of information
+    private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
+        val intent = Intent("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
+        intent.putExtra("characteristic_uuid", characteristic.uuid.toString())
+        intent.putExtra("characteristic_value", characteristic.value)
+
+        // Send intent to all registered Broadcast-Receiver
+        context.sendBroadcast(intent)
     }
+
+
+
+
 }

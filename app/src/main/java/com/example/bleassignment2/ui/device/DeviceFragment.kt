@@ -1,5 +1,8 @@
 package com.example.bleassignment2.ui.device
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,10 +18,12 @@ import com.example.bleassignment2.ui.scanner.ScannerViewModel
 class DeviceFragment : Fragment() {
 
     private var _binding: FragmentDeviceBinding? = null
+    private lateinit var broadcastReceiver: BroadcastReceiver
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
 
     //@SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -43,6 +48,24 @@ class DeviceFragment : Fragment() {
             textViewName.text = selectedBluetoothDevice.name
             println(textViewName.id)
         }
+
+        broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                // check if its the correct intent
+                if (intent.action == "com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED") {
+                    val characteristicUuid = intent.getStringExtra("characteristic_uuid")
+                    val characteristicValue = intent.getByteArrayExtra("characteristic_value")?.let {
+                        String(it)  // convert ByteArray in String
+                    }
+
+                    // update dTextView with new characteristic
+                    val updatedText = "UUID: $characteristicUuid\nValue: $characteristicValue"
+                    binding.deviceName.text = updatedText
+                }
+            }
+        }
+
+
         return root
     }
 
