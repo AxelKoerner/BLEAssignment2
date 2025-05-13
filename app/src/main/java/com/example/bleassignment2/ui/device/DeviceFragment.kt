@@ -52,9 +52,11 @@ class DeviceFragment : Fragment() {
             tv_deviceAddress.text = selectedBluetoothDevice.address
         }
         deviceViewModel.temperature.observe(viewLifecycleOwner){
+            binding.read1CharacteristicName.text = "temperatur"
             binding.read1CharacteristicValue.text = "$it °C"
         }
         deviceViewModel.humidity.observe(viewLifecycleOwner){
+            binding.read2CharacteristicName.text = "humidity"
             binding.read2CharacteristicValue.text = "$it %"
         }
         deviceViewModel.unknown.observe(viewLifecycleOwner){
