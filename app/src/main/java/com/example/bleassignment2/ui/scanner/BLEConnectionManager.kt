@@ -121,8 +121,10 @@ class BLEConnectionManager(private val context: Context) {
     }
 
     companion object {
-        val TEMPERATURE_UUID: UUID = UUID.fromString("2a1c")
-        val HUMIDITY_UUID: UUID = UUID.fromString("2a6f")
+        //val TEMPERATURE_UUID: UUID = UUID.fromString("2a1c")
+        //val HUMIDITY_UUID: UUID = UUID.fromString("2a6f")
+        val TEMPERATURE_UUID: UUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD")
+        val HUMIDITY_UUID: UUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD")
     }
 
     private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
