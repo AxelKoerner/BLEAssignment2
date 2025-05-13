@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                         "humidity" -> {
                             val hum = intent.getFloatExtra("humidity_percent", -1f)
                             println("Humidity update received: $hum %")
-                            deviceViewModel.setTemp(hum)
+                            deviceViewModel.setHum(hum)
                         //binding.read2CharacteristicValue.text = "$hum %"
                         }
                         else -> {
