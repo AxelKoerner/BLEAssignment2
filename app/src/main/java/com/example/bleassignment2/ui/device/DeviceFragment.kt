@@ -1,5 +1,6 @@
 package com.example.bleassignment2.ui.device
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -28,6 +29,7 @@ class DeviceFragment : Fragment() {
 
 
     //@SuppressLint("MissingPermission")
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,17 +55,24 @@ class DeviceFragment : Fragment() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 // check if its the correct intent
-                println("==============RECIVED BROADCAST UPDATE================")
                 if (intent.action == "com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED") {
-                    println("==============On RECIVE BROADCAST CORRECT INTENT================")
-                    val characteristicUuid = intent.getStringExtra("characteristic_uuid")
-                    val characteristicValue = intent.getByteArrayExtra("characteristic_value")?.let {
-                        String(it)  // convert ByteArray in String
-                    }
+                    val type = intent.getStringExtra("type")
 
-                    // update dTextView with new characteristic
-                    val updatedText = "UUID: $characteristicUuid\nValue: $characteristicValue"
-                    binding.deviceName.text = updatedText
+                    when (type) {
+                        "temperature" -> {
+                            val temp = intent.getFloatExtra("temperature_celsius", -1f)
+                            println("Temperature update received: $temp °C")
+                            binding.read1CharacteristicValue.text = "$temp °C"
+                        }
+                        "humidity" -> {
+                            val hum = intent.getFloatExtra("humidity_percent", -1f)
+                            println("Humidity update received: $hum %")
+                            binding.read2CharacteristicValue.text = "$hum %"
+                        }
+                        else -> {
+                            println("Unknown characteristic update received.")
+                        }
+                    }
                 }
             }
         }
@@ -74,14 +83,14 @@ class DeviceFragment : Fragment() {
                 IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED"),
                 Context.RECEIVER_NOT_EXPORTED
             )
-        } else {
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
             requireContext().registerReceiver(
                 broadcastReceiver,
                 IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
             )
         }
 
-        val readButton: Button = binding.read1CharacteristicReadButton
+        val readButton: Button = binding.writeCharacteristicWriteButton
         readButton.setOnClickListener {
                 println("====BUTTON CLICKED======")
         }

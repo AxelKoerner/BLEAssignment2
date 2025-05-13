@@ -18,6 +18,7 @@ import java.util.Queue
 import java.util.UUID
 import android.content.Intent
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 
 class BLEConnectionManager(private val context: Context) {
@@ -119,13 +120,34 @@ class BLEConnectionManager(private val context: Context) {
         }
     }
 
+    companion object {
+        val TEMPERATURE_UUID: UUID = UUID.fromString("2a1c")
+        val HUMIDITY_UUID: UUID = UUID.fromString("2a6f")
+    }
+
     private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
         val intent = Intent("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
         intent.putExtra("characteristic_uuid", characteristic.uuid.toString())
         intent.putExtra("characteristic_value", characteristic.value)
 
         // Send intent to all registered Broadcast-Receiver
-        println("==============CALLED BROADCAST UPDATE================")
+        when (characteristic.uuid) {
+            TEMPERATURE_UUID -> {
+                val temperature = ByteBuffer.wrap(characteristic.value).order(ByteOrder.LITTLE_ENDIAN).short / 100.0f
+                intent.putExtra("type", "temperature")
+                intent.putExtra("temperature_celsius", temperature)
+                println("Broadcasting Temperature: $temperature °C")
+            }
+            HUMIDITY_UUID -> {
+                val humidity = ByteBuffer.wrap(characteristic.value).order(ByteOrder.LITTLE_ENDIAN).short / 100.0f
+                intent.putExtra("type", "humidity")
+                intent.putExtra("humidity_percent", humidity)
+                println("Broadcasting Humidity: $humidity %")
+            }
+            else -> {
+                intent.putExtra("type", "unknown")
+            }
+        }
         context.sendBroadcast(intent)
     }
 
