@@ -23,10 +23,10 @@ import java.util.UUID
 class BLEConnectionManager(private val context: Context) {
     private var gattServer: BluetoothGatt? = null
     private val characteristicQueue: Queue<BluetoothGattCharacteristic> = LinkedList()
-    private val characteristicUUIDs = listOf(
-        UUID.fromString("10000001-0000-0000-FDFD-FDFDFDFDFDFD"),  // Intensity for IPVS-Light
-        UUID.fromString("00002A6F-0000-1000-8000-00805F9B34FB"),   // Humidity for IPVSWeather
-        UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")  //Temperature for IPVSWeather
+    private val serviceUUIDs = listOf(
+        UUID.fromString("00000001-0000-0000-FDFD-FDFDFDFDFDFD"),  // IPVS-Light
+        UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD"),  // IPVSWeather
+        UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb")  // Testing with ESP
     )
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -67,8 +67,10 @@ class BLEConnectionManager(private val context: Context) {
                 for (service: BluetoothGattService in gatt.services) {
                    println("Service UUID: ${service.uuid}")
                     for (characteristic: BluetoothGattCharacteristic in service.characteristics) {
-                        if (characteristic.uuid in characteristicUUIDs) {
+                        println("Characteristic UUID: ${characteristic.uuid}")
+                        if (service.uuid in serviceUUIDs) {
                             characteristicQueue.add(characteristic)
+                            println("Added Characteristic UUID: ${characteristic.uuid} in Service with UUID: ${service.uuid} to queue")
                         }
                     }
                 }
