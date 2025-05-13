@@ -17,6 +17,8 @@ import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
 import android.content.Intent
+import android.widget.Button
+import org.w3c.dom.Text
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -72,7 +74,7 @@ class BLEConnectionManager(private val context: Context) {
                         if (service.uuid in serviceUUIDs) {
                             characteristicQueue.add(characteristic)
                             println("Added Characteristic UUID: ${characteristic.uuid} in Service with UUID: ${service.uuid} to queue")
-                            val intensity: Int = 1000  //TODO remove this
+                            val intensity: Int = 0  //TODO remove this
                             val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
                             writeCharacteristic(characteristic, valueToWrite) //TODO remove this
                         }
@@ -123,8 +125,8 @@ class BLEConnectionManager(private val context: Context) {
     companion object {
         //val TEMPERATURE_UUID: UUID = UUID.fromString("2a1c")
         //val HUMIDITY_UUID: UUID = UUID.fromString("2a6f")
-        val TEMPERATURE_UUID: UUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD")
-        val HUMIDITY_UUID: UUID = UUID.fromString("00000002-0000-0000-FDFD-FDFDFDFDFDFD")
+        val TEMPERATURE_UUID: UUID = UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")
+        val HUMIDITY_UUID: UUID = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")
     }
 
     private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
