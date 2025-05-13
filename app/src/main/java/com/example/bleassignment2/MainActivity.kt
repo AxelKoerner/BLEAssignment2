@@ -51,26 +51,34 @@ class MainActivity : AppCompatActivity() {
                 // check if its the correct intent
                 if (intent.action == "com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED") {
                     val type = intent.getStringExtra("type")
-
+                    val characteristic =
+                        intent.getParcelableExtra<BluetoothGattCharacteristic>("raw_characteristic")
                     when (type) {
                         "temperature" -> {
                             val temp = intent.getFloatExtra("temperature_celsius", -1f)
-                            val tempChar = intent.getParcelableExtra<BluetoothGattCharacteristic>("raw_characteristic")
                             println("Temperature update received: $temp °C")
-                            scannerViewModel.setTemp(temp,tempChar!!)
+                            scannerViewModel.setTemp(temp, characteristic)
                             //binding.read1CharacteristicValue.text = "$temp °C"
                         }
+
                         "humidity" -> {
                             val hum = intent.getFloatExtra("humidity_percent", -1f)
                             println("Humidity update received: $hum %")
-                            scannerViewModel.setHum(hum)
-                        //binding.read2CharacteristicValue.text = "$hum %"
+                            scannerViewModel.setHum(hum, characteristic)
+                            //binding.read2CharacteristicValue.text = "$hum %"
                         }
+                        "light" -> {
+                            val light = intent.getShortExtra("light_val", 0)
+                            println("Light update received: $light %")
+                            scannerViewModel.setLight(light, characteristic)
+                            //binding.read2CharacteristicValue.text = "$hum %"
+                        }
+
                         else -> {
                             println("Unknown characteristic update received.")
-                            val unknown = intent.getByteArrayExtra("unknown_value")?: ByteArray(1)
+                            val unknown = intent.getByteArrayExtra("unknown_value") ?: ByteArray(1)
                             println("Unknown update received: $unknown %")
-                            scannerViewModel.setUnkown(unknown)
+                            scannerViewModel.setUnkown(unknown, characteristic)
 
                         }
                     }

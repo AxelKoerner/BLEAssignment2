@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bleassignment2.databinding.FragmentDeviceBinding
 import com.example.bleassignment2.ui.scanner.ScannerViewModel
+import java.nio.ByteBuffer
 
 class DeviceFragment : Fragment() {
 
@@ -37,16 +38,29 @@ class DeviceFragment : Fragment() {
         val tv_deviceName: TextView = binding.deviceName
         val tv_deviceAddress: TextView = binding.deviceAddress
         //val textView: TextView = binding.deviceList.
+        binding.serviceLayoutReadNotify1.visibility = View.GONE
+        binding.serviceLayoutReadNotify2.visibility = View.GONE
+        binding.serviceLayoutWrite.visibility = View.GONE
+
+
         scannerViewModel.currentSelection.observe(viewLifecycleOwner)
         @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION])
         { selectedBluetoothDevice ->
             if (selectedBluetoothDevice == null) {
+                binding.serviceLayoutReadNotify1.visibility = View.GONE
+                binding.serviceLayoutReadNotify2.visibility = View.GONE
+                binding.serviceLayoutWrite.visibility = View.GONE
                 return@observe
             }
             tv_deviceName.text = selectedBluetoothDevice.name ?: "Unknown Name"
             tv_deviceAddress.text = selectedBluetoothDevice.address
         }
         scannerViewModel.temperature.observe(viewLifecycleOwner) {
+            if (it == null || scannerViewModel.currentSelection.value == null) {
+                binding.serviceLayoutReadNotify1.visibility = View.GONE
+                return@observe
+            }
+            binding.serviceLayoutReadNotify1.visibility = View.VISIBLE
             binding.read1CharacteristicName.text = "temperatur"
             binding.read1CharacteristicUuid.text = "found characteristic"
             binding.read1CharacteristicValue.text = "$it °C"
@@ -56,11 +70,27 @@ class DeviceFragment : Fragment() {
                 })
         }
         scannerViewModel.humidity.observe(viewLifecycleOwner) {
+            if (it == null || scannerViewModel.currentSelection.value == null) {
+                binding.serviceLayoutReadNotify2.visibility = View.GONE
+                return@observe
+            }
+            binding.serviceLayoutReadNotify2.visibility = View.VISIBLE
             binding.read2CharacteristicName.text = "humidity"
             binding.read2CharacteristicUuid.text = "found characteristic"
             binding.read2CharacteristicValue.text = "$it %"
         }
-        scannerViewModel.unknown.observe(viewLifecycleOwner) {
+        scannerViewModel.light.observe(viewLifecycleOwner) {
+            if (it == null || scannerViewModel.currentSelection.value == null) {
+                binding.serviceLayoutWrite.visibility = View.GONE
+                return@observe
+            }
+            binding.serviceLayoutWrite.visibility = View.VISIBLE
+
+            binding.writeCharacteristicWriteButton.setOnClickListener(
+                @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
+                    scannerViewModel.initWriteCharacteristic("light", ByteBuffer.allocate(Int.SIZE_BYTES).putInt(binding.writeCharacteristicValue.progress).array())
+                })
+
             binding.debugTextField.text = it.toString()
         }
 

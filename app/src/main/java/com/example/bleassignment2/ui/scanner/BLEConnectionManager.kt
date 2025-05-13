@@ -40,9 +40,15 @@ class BLEConnectionManager(private val context: Context) {
         gattServer?.disconnect()
         //gattServer?.close()
     }
+
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun read(characteristic: BluetoothGattCharacteristic) {
         gattServer?.readCharacteristic(characteristic)
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun write(characteristic: BluetoothGattCharacteristic, value: ByteArray) {
+        writeCharacteristic(characteristic, value)
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
@@ -55,7 +61,7 @@ class BLEConnectionManager(private val context: Context) {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 println("Disconnected from GATT Server")
                 gatt.close()
-                if (gatt == gattServer){
+                if (gatt == gattServer) {
                     println("Nulling GATT Server Ref")
                     gattServer = null
                 }
@@ -70,11 +76,12 @@ class BLEConnectionManager(private val context: Context) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 println("Service Discovered")
                 for (service: BluetoothGattService in gatt.services) {
-                   println("Service UUID: ${service.uuid}")
+                    println("Service UUID: ${service.uuid}")
                     for (characteristic: BluetoothGattCharacteristic in service.characteristics) {
                         println("Characteristic UUID: ${characteristic.uuid}")
                         if (service.uuid in serviceUUIDs) {
                             characteristicQueue.add(characteristic)
+                            broadcastUpdate(characteristic) // Populate the viewmodel with all available characteristics
                             println("Added Characteristic UUID: ${characteristic.uuid} in Service with UUID: ${service.uuid} to queue")
                             //val intensity: Int = 1000  //TODO remove this
                             //val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
@@ -150,6 +157,23 @@ class BLEConnectionManager(private val context: Context) {
                 intent.putExtra("humidity_percent", humidity)
                 println("Broadcasting Humidity: $humidity %")
             }
+
+            LIGHT_UUID -> {
+                characteristic.value
+                val light =
+                    ByteBuffer.wrap(characteristic.value?: ByteArray(2)).order(ByteOrder.LITTLE_ENDIAN).short
+                intent.putExtra("type", "light")
+                intent.putExtra("light_value", light)
+                println("Broadcasting Light as read: $light %")
+            }
+
+            DEBUG_UUID -> {
+                val debug = characteristic.value
+                intent.putExtra("type", "debug")
+                intent.putExtra("debug_val", debug)
+                println("Broadcasting Humidity: $debug")
+            }
+
             else -> {
                 intent.putExtra("type", "unknown")
                 intent.putExtra("unknown_value", characteristic.value)

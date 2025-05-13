@@ -27,30 +27,52 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
 
     var buttonText: LiveData<String> = _buttonText
 
-    private val _temperatureChar = MutableLiveData<BluetoothGattCharacteristic>()
+    private var _temperatureChar : BluetoothGattCharacteristic? = null
+    private var _humidityChar : BluetoothGattCharacteristic? = null
+    private var _lightChar : BluetoothGattCharacteristic? = null
+    private var _unknownChar : BluetoothGattCharacteristic? = null
 
 
     private val _temperature = MutableLiveData<Float?>()
     val temperature: LiveData<Float?> = _temperature
+
     private val _humidity = MutableLiveData<Float?>()
     val humidity: LiveData<Float?> = _humidity
+
+    private val _light = MutableLiveData<Short?>()
+    val light: LiveData<Short?> = _light
+
     private val _unknown = MutableLiveData<ByteArray?>()
     val unknown: LiveData<ByteArray?> = _unknown
 
-    fun setTemp(temp: Float, tempChar: BluetoothGattCharacteristic) {
+    fun setTemp(temp: Float, tempChar: BluetoothGattCharacteristic?) {
         _temperature.value = temp
-        _temperatureChar.value = tempChar
+        _temperatureChar = tempChar
     }
-    fun setHum(hum: Float) {
+    fun setHum(hum: Float, tempChar: BluetoothGattCharacteristic?) {
         _humidity.value = hum
+        _humidityChar= tempChar
     }
-    fun setUnkown(unknown: ByteArray) {
+    fun setLight(light: Short, tempChar: BluetoothGattCharacteristic?) {
+        _light.value = light
+        _lightChar= tempChar
+    }
+    fun setUnkown(unknown: ByteArray, tempChar: BluetoothGattCharacteristic?) {
         _unknown.value = unknown
+        _unknownChar = tempChar
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun initReadCharacteristic(type: String) {
-        if (type == "temp") bleConnectionManager.read(_temperatureChar.value!!)
+        if (type == "temp") bleConnectionManager.read(_temperatureChar!!)
+        else if (type == "hum") bleConnectionManager.read(_humidityChar!!)
+        else if (type == "unknown") bleConnectionManager.read(_unknownChar!!)
+    }
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun initWriteCharacteristic(type: String, value: ByteArray) {
+        if (type == "light") bleConnectionManager.write(_temperatureChar!!,value)
+        //else if (type == "hum") bleConnectionManager.read(_humidityChar!!)
+        //else if (type == "unknown") bleConnectionManager.read(_unknownChar!!)
     }
 
 
