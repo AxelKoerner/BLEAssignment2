@@ -54,7 +54,8 @@ class BLEConnectionManager(private val context: Context) {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun requestNotify(characteristic: BluetoothGattCharacteristic) {
-        gattServer?.setCharacteristicNotification(characteristic, true)
+        //gattServer?.setCharacteristicNotification(characteristic, true)
+        enableNotifications(characteristic)
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
