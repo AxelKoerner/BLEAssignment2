@@ -167,7 +167,7 @@ class BLEConnectionManager(private val context: Context) {
             throw IllegalArgumentException("sfloat benötigt mindestens 2 Bytes")
         }
 
-        val shortValue = ByteBuffer.wrap(bytes.copyOfRange(0, 2))
+        val shortValue = ByteBuffer.wrap(bytes.copyOfRange(1, 2))
             .order(ByteOrder.LITTLE_ENDIAN)
             .short
 
