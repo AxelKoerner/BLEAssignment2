@@ -142,7 +142,7 @@ class BLEConnectionManager(private val context: Context) {
         // Send intent to all registered Broadcast-Receiver
         when (characteristic.uuid) {
             TEMPERATURE_UUID -> {
-                val temperature = ByteBuffer.wrap(characteristic.value).order(ByteOrder.LITTLE_ENDIAN).short / 100.0f
+                val temperature = parseSfloat(characteristic.value)
                 intent.putExtra("type", "temperature")
                 intent.putExtra("temperature_celsius", temperature)
                 println("Broadcasting Temperature: $temperature °C")
@@ -161,6 +161,16 @@ class BLEConnectionManager(private val context: Context) {
         intent.putExtra("raw_characteristic", characteristic)
         println("==============CALLED BROADCAST UPDATE================")
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+    }
+
+    private fun parseSfloat(bytes: ByteArray): Float {
+        if (bytes.size != 2) {
+            throw IllegalArgumentException("sfloat muss 2 Bytes lang sein")
+        }
+        val shortValue = ByteBuffer.wrap(bytes)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .short
+        return shortValue / 100.0f
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)

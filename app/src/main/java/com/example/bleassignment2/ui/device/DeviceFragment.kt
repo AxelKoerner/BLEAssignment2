@@ -53,6 +53,7 @@ class DeviceFragment : Fragment() {
         }
         scannerViewModel.temperature.observe(viewLifecycleOwner) {
             binding.read1CharacteristicName.text = "temperatur"
+            binding.read1CharacteristicUuid.text = "found characteristic"
             binding.read1CharacteristicValue.text = "$it °C"
             binding.read1CharacteristicReadButton.setOnClickListener(
             @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
@@ -61,6 +62,7 @@ class DeviceFragment : Fragment() {
         }
         scannerViewModel.humidity.observe(viewLifecycleOwner) {
             binding.read2CharacteristicName.text = "humidity"
+            binding.read2CharacteristicUuid.text = "found characteristic"
             binding.read2CharacteristicValue.text = "$it %"
         }
         scannerViewModel.unknown.observe(viewLifecycleOwner) {
