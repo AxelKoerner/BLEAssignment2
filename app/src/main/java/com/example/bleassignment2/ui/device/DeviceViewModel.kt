@@ -10,16 +10,25 @@ class DeviceViewModel : ViewModel() {
     private var _currentSelection: MutableLiveData<BluetoothDevice?> = MutableLiveData()
     var currentSelection: LiveData<BluetoothDevice?> = _currentSelection
 
-    private val _broadcastData = MutableLiveData<Triple<String?, String?, String?>>()
-    val broadcastData: LiveData<Triple<String?, String?, String?>> get() = _broadcastData
+    private val _temperature = MutableLiveData<Float?>()
+    val temperature: LiveData<Float?> = _temperature
+    private val _humidity = MutableLiveData<Float?>()
+    val humidity: LiveData<Float?> = _humidity
+    private val _unknown = MutableLiveData<ByteArray?>()
+    val unknown: LiveData<ByteArray?> = _unknown
 
-    fun setBroadcastData(uuid: String?, serviceUuid: String?, value: String?) {
-        println(_broadcastData.value.toString())
-        _broadcastData.value = Triple(uuid, serviceUuid, value)
-        println(_broadcastData.value.toString())
-    }
     fun setActive(device: BluetoothDevice) {
         _currentSelection.value = device
+    }
+
+    fun setTemp(temp: Float) {
+        _temperature.value = temp
+    }
+    fun setHum(hum: Float) {
+        _humidity.value = hum
+    }
+    fun setUnkown(unknown: ByteArray) {
+        _unknown.value = unknown
     }
 
     fun clear() {

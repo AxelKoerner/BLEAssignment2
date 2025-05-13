@@ -49,21 +49,30 @@ class MainActivity : AppCompatActivity() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 // check if its the correct intent
-                println("==============RECIVED BROADCAST UPDATE================")
                 if (intent.action == "com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED") {
-                    println("==============On RECIVE BROADCAST CORRECT INTENT================")
-                    val characteristicUuid = intent.getStringExtra("characteristic_uuid")
-                    val characteristicServiceUuid =
-                        intent.getStringExtra("characteristic_service_uuid")
-                    val characteristicValue =
-                        intent.getByteArrayExtra("characteristic_value")?.let {
-                            String(it)  // convert ByteArray in String
+                    val type = intent.getStringExtra("type")
+
+                    when (type) {
+                        "temperature" -> {
+                            val temp = intent.getFloatExtra("temperature_celsius", -1f)
+                            println("Temperature update received: $temp °C")
+                            deviceViewModel.setTemp(temp)
+                            //binding.read1CharacteristicValue.text = "$temp °C"
                         }
-                    deviceViewModel.setBroadcastData(
-                        characteristicUuid,
-                        characteristicServiceUuid,
-                        characteristicValue
-                    )
+                        "humidity" -> {
+                            val hum = intent.getFloatExtra("humidity_percent", -1f)
+                            println("Humidity update received: $hum %")
+                            deviceViewModel.setTemp(hum)
+                        //binding.read2CharacteristicValue.text = "$hum %"
+                        }
+                        else -> {
+                            println("Unknown characteristic update received.")
+                            val unknown = intent.getByteArrayExtra("unknown_value")?: ByteArray(1)
+                            println("Unknown update received: $unknown %")
+                            deviceViewModel.setUnkown(unknown)
+
+                        }
+                    }
                 }
             }
         }

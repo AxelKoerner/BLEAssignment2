@@ -13,7 +13,8 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
     private val bleManager = BLEManager()
     private val bleConnectionManager = BLEConnectionManager(application.applicationContext)
     private var _isScanning: Boolean = false
-    var currentSelection: MutableLiveData<BluetoothDevice> = MutableLiveData()
+    private var _currentSelection: MutableLiveData<BluetoothDevice?> = MutableLiveData()
+    var currentSelection: LiveData<BluetoothDevice?> = _currentSelection
     val devices: LiveData<List<Pair<BluetoothDevice, Int>>> = bleManager.devices
     //var currentSelection : LiveData<BluetoothDevice> = _currentSelection
 
@@ -53,13 +54,13 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
             stopScan()
         }
         bleConnectionManager.connectToDevice(device)
-        currentSelection.setValue(device)
+        _currentSelection.setValue(device)
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun isDeviceConnected(device: BluetoothDevice): Boolean {
         println("CALLED ISConnected")
-        val result = currentSelection.value == device
+        val result = _currentSelection.value == device
         return result;
     }
 
@@ -76,8 +77,7 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
             stopScan()
         }
         bleConnectionManager.disconnect()
-        currentSelection = MutableLiveData()
-        val temp = currentSelection.value
+        _currentSelection.value = null
     }
 
 }

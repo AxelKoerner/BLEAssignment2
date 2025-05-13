@@ -73,9 +73,9 @@ class BLEConnectionManager(private val context: Context) {
                         if (service.uuid in serviceUUIDs) {
                             characteristicQueue.add(characteristic)
                             println("Added Characteristic UUID: ${characteristic.uuid} in Service with UUID: ${service.uuid} to queue")
-                            val intensity: Int = 1000  //TODO remove this
-                            val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
-                            writeCharacteristic(characteristic, valueToWrite) //TODO remove this
+                            //val intensity: Int = 1000  //TODO remove this
+                            //val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
+                            //writeCharacteristic(characteristic, valueToWrite) //TODO remove this
                         }
                     }
                 }
@@ -149,6 +149,7 @@ class BLEConnectionManager(private val context: Context) {
             }
             else -> {
                 intent.putExtra("type", "unknown")
+                intent.putExtra("unknown_value", characteristic.value)
             }
         }
         println("==============CALLED BROADCAST UPDATE================")
