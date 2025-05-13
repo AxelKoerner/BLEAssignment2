@@ -53,10 +53,12 @@ class DeviceFragment : Fragment() {
         }
         deviceViewModel.temperature.observe(viewLifecycleOwner){
             binding.read1CharacteristicName.text = "temperatur"
+            binding.read1CharacteristicUuid.text = "found characteristic"
             binding.read1CharacteristicValue.text = "$it °C"
         }
         deviceViewModel.humidity.observe(viewLifecycleOwner){
             binding.read2CharacteristicName.text = "humidity"
+            binding.read2CharacteristicUuid.text = "found characteristic"
             binding.read2CharacteristicValue.text = "$it %"
         }
         deviceViewModel.unknown.observe(viewLifecycleOwner){
