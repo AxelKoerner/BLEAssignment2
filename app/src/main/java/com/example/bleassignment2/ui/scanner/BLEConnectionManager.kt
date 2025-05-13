@@ -92,7 +92,7 @@ class BLEConnectionManager(private val context: Context) {
                             //val intensity: Int = 1000  //TODO remove this
                             //val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
                             //writeCharacteristic(characteristic, valueToWrite) //TODO remove this
-                            //enableNotifications(characteristic) //TODO remove this
+                            enableNotifications(characteristic) //TODO remove this
                         }
                     }
                 }
@@ -142,8 +142,8 @@ class BLEConnectionManager(private val context: Context) {
     }
 
     companion object {
-        val TEMPERATURE_UUID: UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
-        val HUMIDITY_UUID: UUID = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")
+        val TEMPERATURE_UUID: UUID = UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")
+        val HUMIDITY_UUID: UUID = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")
         val LIGHT_UUID: UUID = UUID.fromString("10000001-0000-0000-FDFD-FDFDFDFDFDFD")
         //val DEBUG_UUID: UUID = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")
         //val TEMPERATURE_UUID: UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
@@ -161,7 +161,8 @@ class BLEConnectionManager(private val context: Context) {
         // Send intent to all registered Broadcast-Receiver
         when (characteristic.uuid) {
             TEMPERATURE_UUID -> {
-                val temperature = parseSfloat(characteristic.value)
+                val temperature = parseSfloat(characteristic.value ?: ByteArray(4))
+
                 intent.putExtra("type", "temperature")
                 intent.putExtra("temperature_celsius", temperature)
                 println("Broadcasting Temperature: $temperature °C")
