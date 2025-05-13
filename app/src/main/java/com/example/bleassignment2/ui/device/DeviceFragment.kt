@@ -104,8 +104,8 @@ class DeviceFragment : Fragment() {
                 @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
                     scannerViewModel.initWriteCharacteristic(
                         "light",
-                        ByteBuffer.allocate(Int.SIZE_BYTES)
-                            .putInt(binding.writeCharacteristicValue.progress).array()
+                        ByteBuffer.allocate(Short.SIZE_BYTES)
+                            .putShort(binding.writeCharacteristicValue.progress.toShort()).array()
                     )
                 })
 
