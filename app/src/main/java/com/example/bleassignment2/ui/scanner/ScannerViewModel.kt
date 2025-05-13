@@ -137,6 +137,16 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
         }
         bleConnectionManager.disconnect()
         _currentSelection.value = null
+        _temperatureChar = null
+        _humidityChar = null
+        _lightChar = null
+        _unknownChar = null
+        _temperature.value = null
+        _humidity.value = null
+        _light.value = null
+        _unknown.value = null
+
+
     }
 
 }

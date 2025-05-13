@@ -41,7 +41,7 @@ class DeviceFragment : Fragment() {
         binding.serviceLayoutReadNotify1.visibility = View.GONE
         binding.serviceLayoutReadNotify2.visibility = View.GONE
         binding.serviceLayoutWrite.visibility = View.GONE
-
+        binding.debugTextField.visibility = View.GONE
 
         scannerViewModel.currentSelection.observe(viewLifecycleOwner)
         @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION])
