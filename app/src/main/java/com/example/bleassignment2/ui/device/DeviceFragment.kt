@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -37,16 +38,15 @@ class DeviceFragment : Fragment() {
         _binding = FragmentDeviceBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textViewName: TextView = binding.deviceName
+        val tv_deviceName: TextView = binding.deviceName
+        val tv_deviceAddress: TextView = binding.deviceAddress
         //val textView: TextView = binding.deviceList.
-        scannerViewModel.currentSelection.observe(viewLifecycleOwner) @androidx.annotation.RequiresPermission(
-            allOf = [android.Manifest.permission.BLUETOOTH_CONNECT,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ]
-        ) { selectedBluetoothDevice ->
+        scannerViewModel.currentSelection.observe(viewLifecycleOwner)
+        @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION])
+        { selectedBluetoothDevice ->
 
-            textViewName.text = selectedBluetoothDevice.name
-            println(textViewName.id)
+            tv_deviceName.text = selectedBluetoothDevice.name?:"Unknown Name"
+            tv_deviceAddress.text = selectedBluetoothDevice.address
         }
 
         broadcastReceiver = object : BroadcastReceiver() {

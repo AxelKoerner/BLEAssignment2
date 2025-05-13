@@ -25,7 +25,7 @@ class BLEManager() {
     val devices: LiveData<List<Pair<BluetoothDevice, Int>>> get() = _devices
 
     //Callback function that gets called from the startScan() / stopScan() method. Here the ScanResult can get processed
-    private var scanCallback: ScanCallback = object : ScanCallback(){
+    private var scanCallback: ScanCallback = object : ScanCallback() {
         @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.let { res ->
@@ -34,7 +34,7 @@ class BLEManager() {
                 val current = _devices.value ?: listOf()
                 //only show the devices
                 if (current.none { it.first.address == device.address }
-                    && (res.device.name == "IPVSWeather" || res.device.name == "IPVS-LIGHT" || res.device.name == "ESP_GATTS_DEMO")  ) {
+                    && (res.device.name == "IPVSWeather" || res.device.name == "IPVS-LIGHT" || (res.device.name == "ESP_GATTS_DEMO" || res.device.address == "FC:E8:C0:74:19:4E"))) {
                     _devices.value = current + Pair(device, rssi)
                 }
             }
