@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import java.util.Arrays
@@ -35,17 +37,24 @@ class BLEConnectionManager(private val context: Context) {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun disconnect() {
         gattServer?.disconnect()
-        gattServer?.close()
+        //gattServer?.close()
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            println("onConnectionStateChange: status=$status, newState=$newState")
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 println("Connected to GATT Server")
                 gatt.discoverServices()
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 println("Disconnected from GATT Server")
+                gatt.close()
+                if (gatt == gattServer){
+                    println("Nulling GATT Server Ref")
+                    gattServer == null
+                }
+
             }
         }
 
@@ -96,7 +105,8 @@ class BLEConnectionManager(private val context: Context) {
             val uuid = characteristicQueue.poll()
             gatt.readCharacteristic(uuid)
         } else {
-            Toast.makeText(context, "Characteristics UUID are all read", Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, "Characteristics UUID are all read", Toast.LENGTH_SHORT).show()            }
         }
     }
 

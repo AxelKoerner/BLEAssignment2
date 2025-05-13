@@ -99,22 +99,38 @@ class ScannerFragment : Fragment() {
 
         //logic for the button, start scan if permission is granted (calls middle layer ViewModel method) else launch the permission requester
         button.setOnClickListener {
-            if (button.text == "Scan") {
+            println("Scan_button clicked")
+            if (scannerViewModel.isScanning()) {
+
+                println("is-scanning")
                 if (hasPermissions()) {
-                    scannerViewModel.startScan()
-                    button.text = "Cancel Scan"
+                    println("stopping scan")
+                    scannerViewModel.stopScan()
+                    //button.text = "Scan"
                 } else {
                     requestPermissionLauncher.launch(requiredPermissions)
                 }
             } else {
+                println("isnt-scanning")
                 if (hasPermissions()) {
-                    scannerViewModel.stopScan()
-                    button.text = "Scan"
+                    println("starting scan")
+
+                    scannerViewModel.startScan()
+                    //button.text = "Cancel Scan"
                 } else {
                     requestPermissionLauncher.launch(requiredPermissions)
                 }
             }
         }
+        scannerViewModel.buttonText.observe(viewLifecycleOwner) @androidx.annotation.RequiresPermission(
+            allOf = [android.Manifest.permission.BLUETOOTH_CONNECT,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ]
+        ){
+            button.text = it
+        }
+
+        button.text
         return root
     }
 
