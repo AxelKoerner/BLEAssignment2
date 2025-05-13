@@ -46,9 +46,6 @@ class DeviceFragment : Fragment() {
         @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION])
         { selectedBluetoothDevice ->
             if (selectedBluetoothDevice == null) {
-                binding.serviceLayoutReadNotify1.visibility = View.GONE
-                binding.serviceLayoutReadNotify2.visibility = View.GONE
-                binding.serviceLayoutWrite.visibility = View.GONE
                 return@observe
             }
             tv_deviceName.text = selectedBluetoothDevice.name?:"Unknown Name"
@@ -60,7 +57,7 @@ class DeviceFragment : Fragment() {
         }
 
 
-        val readButton: Button = binding.read1CharacteristicReadButton
+        val readButton: Button = binding.writeCharacteristicWriteButton
         readButton.setOnClickListener {
                 println("====BUTTON CLICKED======")
         }
