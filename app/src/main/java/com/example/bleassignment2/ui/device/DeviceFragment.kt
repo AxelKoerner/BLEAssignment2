@@ -52,7 +52,9 @@ class DeviceFragment : Fragment() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 // check if its the correct intent
+                println("==============RECIVED BROADCAST UPDATE================")
                 if (intent.action == "com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED") {
+                    println("==============On RECIVE BROADCAST CORRECT INTENT================")
                     val characteristicUuid = intent.getStringExtra("characteristic_uuid")
                     val characteristicValue = intent.getByteArrayExtra("characteristic_value")?.let {
                         String(it)  // convert ByteArray in String
