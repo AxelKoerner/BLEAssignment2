@@ -9,12 +9,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import com.example.bleassignment2.R
 import com.example.bleassignment2.databinding.FragmentDeviceBinding
 import com.example.bleassignment2.ui.scanner.ScannerViewModel
 
@@ -82,6 +81,10 @@ class DeviceFragment : Fragment() {
             )
         }
 
+        val readButton: Button = binding.read1CharacteristicReadButton
+        readButton.setOnClickListener {
+                println("====BUTTON CLICKED======")
+        }
 
         return root
     }

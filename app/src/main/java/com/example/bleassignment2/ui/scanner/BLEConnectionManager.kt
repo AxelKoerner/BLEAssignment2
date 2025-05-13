@@ -53,7 +53,7 @@ class BLEConnectionManager(private val context: Context) {
                 gatt.close()
                 if (gatt == gattServer){
                     println("Nulling GATT Server Ref")
-                    gattServer == null
+                    gattServer = null
                 }
 
             }
@@ -72,7 +72,7 @@ class BLEConnectionManager(private val context: Context) {
                         if (service.uuid in serviceUUIDs) {
                             characteristicQueue.add(characteristic)
                             println("Added Characteristic UUID: ${characteristic.uuid} in Service with UUID: ${service.uuid} to queue")
-                            val valueToWrite = byteArrayOf(0x01, 0x02, 0x03)  //TODO remove this
+                            val valueToWrite = byteArrayOf(0x02, 0x02, 0x03)  //TODO remove this
                             writeCharacteristic(characteristic, valueToWrite) //TODO remove this
                         }
                     }
