@@ -69,12 +69,13 @@
                 android:id="@+id/read_1_characteristic_read_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Read " />
+                android:text="Read "/>
 
             <Button
                 android:id="@+id/read_1_characteristic_notify_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
                 android:text="Notify " />
         </LinearLayout>
 
@@ -122,6 +123,7 @@
                 android:id="@+id/read_2_characteristic_notify_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
                 android:text="Notify " />
         </LinearLayout>
 
