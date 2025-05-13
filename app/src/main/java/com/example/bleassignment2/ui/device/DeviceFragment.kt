@@ -62,11 +62,13 @@ class DeviceFragment : Fragment() {
                         "temperature" -> {
                             val temp = intent.getFloatExtra("temperature_celsius", -1f)
                             println("Temperature update received: $temp °C")
+                            binding.read1CharacteristicName.text = "Temperature"
                             binding.read1CharacteristicValue.text = "$temp °C"
                         }
                         "humidity" -> {
                             val hum = intent.getFloatExtra("humidity_percent", -1f)
                             println("Humidity update received: $hum %")
+                            binding.read2CharacteristicName.text = "Humidity"
                             binding.read2CharacteristicValue.text = "$hum %"
                         }
                         else -> {
