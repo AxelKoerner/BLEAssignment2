@@ -92,7 +92,7 @@ class BLEConnectionManager(private val context: Context) {
                             //val intensity: Int = 1000  //TODO remove this
                             //val valueToWrite = ByteBuffer.allocate(2).putShort(intensity.toShort()).array() //TODO remove this
                             //writeCharacteristic(characteristic, valueToWrite) //TODO remove this
-                            enableNotifications(characteristic) //TODO remove this
+                            // enableNotifications(characteristic) //TODO remove this
                         }
                     }
                 }
@@ -168,7 +168,7 @@ class BLEConnectionManager(private val context: Context) {
                 println("Broadcasting Temperature: $temperature °C")
             }
             HUMIDITY_UUID -> {
-                val humidity = ByteBuffer.wrap(characteristic.value).order(ByteOrder.LITTLE_ENDIAN).short / 100.0f
+                val humidity = ByteBuffer.wrap(characteristic.value ?: ByteArray(4)).order(ByteOrder.LITTLE_ENDIAN).short / 100.0f
                 intent.putExtra("type", "humidity")
                 intent.putExtra("humidity_percent", humidity)
                 println("Broadcasting Humidity: $humidity %")
