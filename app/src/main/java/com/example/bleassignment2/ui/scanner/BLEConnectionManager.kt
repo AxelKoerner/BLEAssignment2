@@ -17,8 +17,7 @@ import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
 import android.content.Intent
-
-
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 
 class BLEConnectionManager(private val context: Context) {
@@ -124,7 +123,7 @@ class BLEConnectionManager(private val context: Context) {
 
         // Send intent to all registered Broadcast-Receiver
         println("==============CALLED BROADCAST UPDATE================")
-        context.sendBroadcast(intent)
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 
 

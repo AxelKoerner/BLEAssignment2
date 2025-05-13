@@ -34,8 +34,8 @@ class DeviceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val scannerViewModel =
-            ViewModelProvider(this.requireActivity()).get(ScannerViewModel::class.java)
+        val deviceViewModel =
+            ViewModelProvider(this.requireActivity()).get(DeviceViewModel::class.java)
 
         _binding = FragmentDeviceBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -43,44 +43,23 @@ class DeviceFragment : Fragment() {
         val tv_deviceName: TextView = binding.deviceName
         val tv_deviceAddress: TextView = binding.deviceAddress
         //val textView: TextView = binding.deviceList.
-        scannerViewModel.currentSelection.observe(viewLifecycleOwner)
+        deviceViewModel.currentSelection.observe(viewLifecycleOwner)
         @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.ACCESS_FINE_LOCATION])
         { selectedBluetoothDevice ->
-
+            if (selectedBluetoothDevice == null) {
+                binding.serviceLayoutReadNotify1.visibility = View.GONE
+                binding.serviceLayoutReadNotify2.visibility = View.GONE
+                binding.serviceLayoutWrite.visibility = View.GONE
+                return@observe
+            }
             tv_deviceName.text = selectedBluetoothDevice.name?:"Unknown Name"
             tv_deviceAddress.text = selectedBluetoothDevice.address
         }
-
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                // check if its the correct intent
-                println("==============RECIVED BROADCAST UPDATE================")
-                if (intent.action == "com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED") {
-                    println("==============On RECIVE BROADCAST CORRECT INTENT================")
-                    val characteristicUuid = intent.getStringExtra("characteristic_uuid")
-                    val characteristicValue = intent.getByteArrayExtra("characteristic_value")?.let {
-                        String(it)  // convert ByteArray in String
-                    }
-
-                    // update dTextView with new characteristic
-                    val updatedText = "UUID: $characteristicUuid\nValue: $characteristicValue"
-                    binding.deviceName.text = updatedText
-                }
-            }
+        deviceViewModel.broadcastData.observe(viewLifecycleOwner){
+            data ->
+                binding.debugTextField.text = data.toString()
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireContext().registerReceiver(
-                broadcastReceiver,
-                IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED"),
-                Context.RECEIVER_NOT_EXPORTED
-            )
-        } else {
-            requireContext().registerReceiver(
-                broadcastReceiver,
-                IntentFilter("com.example.bleassignment2.ACTION_CHARACTERISTIC_CHANGED")
-            )
-        }
 
 
         return root
@@ -89,6 +68,5 @@ class DeviceFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        requireContext().unregisterReceiver(broadcastReceiver)
     }
 }

@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bleassignment2.databinding.FragmentScannerBinding
 import com.example.bleassignment2.ui.device.DeviceAdapter
+import com.example.bleassignment2.ui.device.DeviceViewModel
 
 class ScannerFragment : Fragment() {
 
@@ -41,6 +42,8 @@ class ScannerFragment : Fragment() {
 
         val scannerViewModel =
             ViewModelProvider(this.requireActivity()).get(ScannerViewModel::class.java)
+        val deviceViewModel =
+            ViewModelProvider(this.requireActivity()).get(DeviceViewModel::class.java)
 
         //inflate the fragment_scanner.xml using View Binding
         _binding = FragmentScannerBinding.inflate(inflater, container, false)
@@ -50,10 +53,17 @@ class ScannerFragment : Fragment() {
         val adapter = DeviceAdapter(
             emptyList(),
             { device ->
-                scannerViewModel.connectToDevice(device)
+                if (scannerViewModel.currentSelection.value != null) {
+                    println("Already connected, aborting")
+                } else {
+                    scannerViewModel.connectToDevice(device)
+                    deviceViewModel.setActive(device)
+                }
             },
             { device ->
                 scannerViewModel.disconnect()
+                deviceViewModel.clear()
+
             },
             { device ->
                 scannerViewModel.isDeviceConnected(device)

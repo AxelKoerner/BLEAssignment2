@@ -166,5 +166,12 @@
                 android:layout_height="wrap_content"
                 android:text="Write " />
         </LinearLayout>
+        <TextView
+            android:id="@+id/debug_text_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Debug"
+            android:textStyle="bold" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
