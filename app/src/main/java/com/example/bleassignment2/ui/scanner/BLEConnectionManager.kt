@@ -134,10 +134,14 @@ class BLEConnectionManager(private val context: Context) {
     }
 
     companion object {
-        //val TEMPERATURE_UUID: UUID = UUID.fromString("2a1c")
-        //val HUMIDITY_UUID: UUID = UUID.fromString("2a6f")
-        val TEMPERATURE_UUID: UUID = UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb")
-        val HUMIDITY_UUID: UUID = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")
+        val TEMPERATURE_UUID: UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
+        val HUMIDITY_UUID: UUID = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")
+        val LIGHT_UUID: UUID = UUID.fromString("10000001-0000-0000-FDFD-FDFDFDFDFDFD")
+        //val DEBUG_UUID: UUID = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")
+        //val TEMPERATURE_UUID: UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
+        //val HUMIDITY_UUID: UUID = UUID.fromString("0000ee01-0000-1000-8000-00805f9b34fb")
+        //val LIGHT_UUID: UUID = UUID.fromString("0000ee01-0000-1000-8000-00805f9b34fb")
+        //val DEBUG_UUID: UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
     }
 
     private fun broadcastUpdate(characteristic: BluetoothGattCharacteristic) {
@@ -169,12 +173,12 @@ class BLEConnectionManager(private val context: Context) {
                 println("Broadcasting Light as read: $light %")
             }
 
-            DEBUG_UUID -> {
-                val debug = characteristic.value
-                intent.putExtra("type", "debug")
-                intent.putExtra("debug_val", debug)
-                println("Broadcasting Humidity: $debug")
-            }
+            //DEBUG_UUID -> {
+            //    val debug = characteristic.value
+            //    intent.putExtra("type", "debug")
+            //    intent.putExtra("debug_val", debug)
+            //    println("Broadcasting Humidity: $debug")
+            //}
 
             else -> {
                 intent.putExtra("type", "unknown")
